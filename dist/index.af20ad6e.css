@@ -1,0 +1,71 @@
+#buttons {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+#buttons button {
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  background-color: #ff4d4d;
+  border: none;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  text-decoration: none;
+  transition-duration: .4s;
+  display: block;
+}
+
+#buttons button:hover {
+  background-color: #45a049;
+}
+
+.buttonss {
+  z-index: 100;
+  color: #2a14b9;
+  position: absolute;
+}
+
+#mercuryButton {
+  color: red;
+  background-color: #9acd32;
+}
+
+.progress-bar-container {
+  z-index: 1000;
+  background-color: #000;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#progress-bar {
+  width: 30%;
+  height: 2%;
+  margin-top: .5%;
+}
+
+label {
+  color: #fff;
+  font-size: 2rem;
+}
+
+.three-js-text {
+  z-index: 90;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*# sourceMappingURL=index.af20ad6e.css.map */
