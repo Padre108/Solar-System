@@ -111,7 +111,8 @@ function createPlanete(size, texture, position, ring) {
     mesh.position.x = position;
     return {mesh, obj}
 }
-
+let divText = document.createElement('div') //wieg
+let divDescription = document.createElement('div')
 
 const mercury = createPlanete(3.2, mercuryTexture, 28);
 const venus = createPlanete(5.8, venusTexture, 44);
@@ -134,27 +135,6 @@ const pluto = createPlanete(2.8, plutoTexture, 216);
 const pointLight = new THREE.PointLight(0xFFFFFF, 30000, 3000);
 scene.add(pointLight);
 
-// followtext
-// const followTextMercury = document.getElementById('follow-text-mercury');
-// const canvas = document.querySelector('canvas');
-// const boxPosition = new THREE.Vector3();
-// let boxPositionOffset = new THREE.Vector3();
-// mixer = new THREE.AnimationMixer(mercury);
-// followtext
-
-// try
-// let gameloop = () =>{
-//     if(mercury){
-//         boxPosition.setFromMatrixPosition(mercury.matrixWorld);
-//         boxPosition.project(camera);
-//     }
-//     if (mixer) mixer.updat(eclock.getDelta());
-//     orbitControls.update()
-//     labelRenderer.render(scene,camera);
-//     requestAnimationFrame(gameloop)
-// }
-// gameloop();
-// try
 function animate() {
     //Self-rotation
     sun.rotateY(0.004);
@@ -170,15 +150,15 @@ function animate() {
     labelRenderer.render(scene,camera);
 
     //Around-sun-rotation
-//    mercury.obj.rotateY(0.04);
-//     venus.obj.rotateY(0.015);
-//     earth.obj.rotateY(0.01);
-//     mars.obj.rotateY(0.008);
-//     jupiter.obj.rotateY(0.002);
-//     saturn.obj.rotateY(0.0009);
-//     uranus.obj.rotateY(0.0004);
-//     neptune.obj.rotateY(0.0001);
-//     pluto.obj.rotateY(0.00007);
+   mercury.obj.rotateY(0.04);
+    venus.obj.rotateY(0.015);
+    earth.obj.rotateY(0.01);
+    mars.obj.rotateY(0.008);
+    jupiter.obj.rotateY(0.002);
+    saturn.obj.rotateY(0.0009);
+    uranus.obj.rotateY(0.0004);
+    neptune.obj.rotateY(0.0001);
+    pluto.obj.rotateY(0.00007);
 
     renderer.render(scene, camera);
 }
@@ -187,6 +167,18 @@ renderer.setAnimationLoop(animate);
 
 
 //Tween function to zoom kada planet
+// document.getElementById('mercuryButton').addEventListener('click', function() {
+//     gsap.to(camera.position, {
+//         duration: 2,
+//         x: mercury.mesh.position.x,
+//         y: mercury.mesh.position.y,
+//         z: mercury.mesh.position.z + 20,
+//         onUpdate: () => camera.lookAt(mercury.mesh.position)
+        
+    // });
+//button to show text - wieg
+
+
 document.getElementById('mercuryButton').addEventListener('click', function() {
     gsap.to(camera.position, {
         duration: 2,
@@ -196,8 +188,23 @@ document.getElementById('mercuryButton').addEventListener('click', function() {
         onUpdate: () => camera.lookAt(mercury.mesh.position)
     });
 
-    
+    // titlechange -wieg
+    divText.textContent = 'MERCURY';
+    divText.setAttribute('id', 'title');
+    divText.setAttribute('class', 'title');
+    title.append(divText);
 });
+
+document.getElementById('mercuryButton').addEventListener('click', function(){ //wieg
+    divDescription
+    divDescription.textContent = 'Mercury, the nearest planet to the sun and the smallest in our solar system, lacks moons and races around the sun faster than any other planet. Romans named it after their swift-footed messenger god due to its rapid orbit. Its surface is marked by tens of thousands of impact craters.'
+    divDescription.setAttribute('id', 'description')
+    divDescription.setAttribute('class', 'description')
+    description.append(divDescription)
+});  
+// });
+
+
 
 document.getElementById('venusButton').addEventListener('click', function() {
     gsap.to(camera.position, {
@@ -209,7 +216,18 @@ document.getElementById('venusButton').addEventListener('click', function() {
         onUpdate: () => camera.lookAt(venus.mesh.position)
     });
 });
+document.getElementById('venusButton').addEventListener('click', function(){ // wieg
+    divText.textContent = 'VENUS'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
+});
+document.getElementById('venusButton').addEventListener('click', function(){ //wieg
+    divDescription.textContent = "Venus, shrouded in clouds and named after a goddess of love, is frequently referred to as Earth's counterpart. However, upon closer examination, Venus reveals its infernal nature. Positioned as our closest planetary neighbor, it's the second planet from the Sun and possesses a surface so scorching that it could liquefy lead. Ranking as the second planet from the Sun and sixth in size and mass within our solar system."
+    description.append(divDescription)
 
+});  
 document.getElementById('earthButton').addEventListener('click', function() {
     gsap.to(camera.position, {
         duration: 2,
@@ -217,9 +235,23 @@ document.getElementById('earthButton').addEventListener('click', function() {
         y: earth.mesh.position.y,
         z: earth.mesh.position.z + 20,
         onUpdate: () => camera.lookAt(earth.mesh.position)
+        
+        
     });
 });
 
+document.getElementById('earthButton').addEventListener('click', function(){ //weig
+    divText.textContent = 'EARTH'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
+});
+
+document.getElementById('earthButton').addEventListener('click', function(){ //wieg
+    divDescription.textContent = "Earth, named uniquely from Old English and Germanic origins, means 'the ground' and is the third planet from the Sun. It's called by diverse names in various languages, serving as our home and the singular known habitat for life in the solar system, distinguished by its possession of surface water."
+    description.append(divDescription)
+});
 document.getElementById('marsButton').addEventListener('click', function() {
     gsap.to(camera.position, {
         duration: 2,
@@ -228,6 +260,18 @@ document.getElementById('marsButton').addEventListener('click', function() {
         z: mars.mesh.position.z + 20,
         onUpdate: () => camera.lookAt(mars.mesh.position)
     });
+document.getElementById('marsButton').addEventListener('click', function(){ //wieg
+        divDescription.textContent = "Mars, a barren, rocky, and frigid world, orbits as the fourth planet from the Sun and stands as one of Earth's adjacent neighbors alongside Venus. Easily visible in the night sky, it appears as a vibrant red dot, earning its moniker, the Red Planet. Throughout history, Mars has been linked to conflict and violence due to its association with warfare and slaughter."
+        description.append(divDescription)
+        
+});
+});
+document.getElementById('marsButton').addEventListener('click', function(){ //weig
+    divText.textContent = 'MARS'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
 });
 
 document.getElementById('jupiterButton').addEventListener('click', function() {
@@ -238,6 +282,18 @@ document.getElementById('jupiterButton').addEventListener('click', function() {
         z: jupiter.mesh.position.z + 40,
         onUpdate: () => camera.lookAt(jupiter.mesh.position)
     });
+});
+document.getElementById('jupiterButton').addEventListener('click', function(){ //weig
+    divText.textContent = 'JUPITER'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
+});
+
+document.getElementById('jupiterButton').addEventListener('click', function(){ //wieg
+    divDescription.textContent = 'Jupiter, positioned as the fifth planet from the Sun, reigns as the largest planet in our solar system, surpassing the combined mass of all other planets twofold. Its distinctive bands and whirling patterns consist of chilly, windy clouds comprising ammonia and water, suspended within an atmosphere primarily composed of hydrogen and helium.'
+    description.append(divDescription)
 });
 
 document.getElementById('saturnButton').addEventListener('click', function() {
@@ -251,6 +307,20 @@ document.getElementById('saturnButton').addEventListener('click', function() {
 });
 
 
+document.getElementById('saturnButton').addEventListener('click', function(){ //weig
+    divText.textContent = 'SATURN'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
+});
+
+document.getElementById('saturnButton').addEventListener('click', function(){ //wieg
+    divDescription.textContent = 'Saturn, the sixth planet from the Sun and second-largest in our system, shares similarities with Jupiter as a massive gas sphere rich in hydrogen and helium. Distinguished by its unparalleled ring system, Saturn possesses a collection of moons, setting it apart from other planets in our solar system.'
+    description.append(divDescription)
+});
+
+
 document.getElementById('uranusButton').addEventListener('click', function() {
     gsap.to(camera.position, {
         duration: 2,
@@ -258,7 +328,21 @@ document.getElementById('uranusButton').addEventListener('click', function() {
         y: uranus.mesh.position.y + 20,
         z: uranus.mesh.position.z + 40,
         onUpdate: () => camera.lookAt(uranus.mesh.position)
+
     });
+});
+
+document.getElementById('uranusButton').addEventListener('click', function(){ //wieg
+    divDescription.textContent = "Neptune, the solar system's third most massive and farthest planet from the Sun, can't be seen without aid due to its extreme distance. Through a small telescope, it appears as a faint, tiny blue-green disk, showcasing its icy, windy, and remote nature, positioned significantly beyond Earth's distance from the Sun. As the sole unobservable planet without visual assistance, Neptune remains over 30 times farther from the Sun than our planet"
+    description.append(divDescription)
+});
+
+document.getElementById('uranusButton').addEventListener('click', function(){ //weig
+    divText.textContent = 'URANUS'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
 });
 
 document.getElementById('neptuneButton').addEventListener('click', function() {
@@ -271,7 +355,18 @@ document.getElementById('neptuneButton').addEventListener('click', function() {
     });
 });
 
+document.getElementById('neptuneButton').addEventListener('click', function(){ //wieg
+    divDescription.textContent = 'Uranus, an ice giant akin to Neptune, is composed mainly of hot, dense icy substances such as water, methane, and ammonia, surrounding a small rocky core. Its freezing, windy climate hosts faint rings and more than two dozen moons, while its unique nearly 90-degree tilt gives it an appearance of rotating on its side.'
+    description.append(divDescription)
+});
 
+document.getElementById('neptuneButton').addEventListener('click', function(){ //weig
+    divText.textContent = 'NEPTUNE'
+    divText.style.marginTop ='10px'
+    divText.setAttribute('id', 'title')
+    divText.setAttribute('class', 'title')
+    title.append(divText);
+});
 //resize
 window.addEventListener('resize', function() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -284,25 +379,7 @@ window.addEventListener('resize', function() {
 
 const labelRenderer = new CSS2DRenderer();
 labelRenderer.setSize(window.innerWidth, window.innerHeight);
-    // labelRenderer.domElement.style.position = 'absolute';
-    // labelRenderer.domElement.style.top = '0px';
-    // labelRenderer,domElement.style.pointerEvents = 'none';
-    // document.body.appendChild(labelRenderer.domElement);
 
-
-// button test
-// const p = document.createElement('p');
-// p.textContent = 'Hello';
-// // const cPointLabel = new CSS2DObject(p);
-// // scene.add(cPointLabel);
-// // cPointLabel.position.set(-6, 0.8, 4);
-
-// const div = document.createElement('div');
-// div.appendChild(p);
-// const divContainer = new CSS2DObject(div);
-// scene.add(divContainer);
-
-//to hold ang mga points
 
 function createCpointMesh(name, x, y, z){
     const geo = new THREE.SphereBufferGeometry(0.1);
@@ -311,5 +388,4 @@ function createCpointMesh(name, x, y, z){
     mesh.position.set(x, y, z);
     mesh.name = name;
     return mesh;
-} 
-
+}
