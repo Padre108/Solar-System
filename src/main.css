@@ -1,6 +1,9 @@
-
+.body{
+    margin: 0%;
+}
 
 #buttons {
+    margin-top: 100px;
     position: absolute;
     top: 10px;
     left: 10px;
@@ -10,7 +13,7 @@
     display: block;
     margin-bottom: 10px;
     padding: 10px;
-    background-color: #ff4d4d; /* Green */
+    background-color: #ff4d4d; 
     border: none;
     color: white;
     text-align: center;
@@ -75,3 +78,29 @@ label{
     transform: translate(-50%, -50%);
     color: white; 
   }
+.textMercury{
+    position: absolute;
+    margin-bottom: 0px;
+    color: rgb(39, 8, 152);
+}
+
+.title{
+    transition: 2s;
+    
+    margin-left: 44%;
+    margin-top: 10%;
+    position: absolute;
+    color: white;
+    font-size: 25px;
+}
+
+.description{
+    transition-duration: 2s;
+    position: absolute;
+    z-index: 100;
+    width: 200px;
+    margin-top: 15%;
+    margin-left: 65%;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.482);
+}
