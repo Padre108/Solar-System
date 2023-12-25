@@ -1,9 +1,8 @@
 import * as THREE from 'three';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
+// import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import { gsap } from 'gsap';
 import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer.js';
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
-import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js';
+
 
 
 import starsTexture from '../img/stars.jpg';
@@ -18,7 +17,7 @@ import saturnRingTexture from '../img/saturn ring.png';
 import uranusTexture from '../img/uranus.jpg';
 import uranusRingTexture from '../img/uranus ring.png';
 import neptuneTexture from '../img/neptune.jpg';
-import plutoTexture from '../img/pluto.jpg';
+
 
 const renderer = new THREE.WebGLRenderer();
 
@@ -34,6 +33,8 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
+
+camera.position.set(0, 50, 500); // move up to 150 on the y-axis
 // loading page - wieg
 const loadingManager = new THREE.LoadingManager();
 // loadingManager.onStart = function(url, item, total){
@@ -54,16 +55,14 @@ loadingManager.onLoad = function(){
     }
 
 
-const gltfLoader = new GLTFLoader(loadingManager);
+// const gltfLoader = new GLTFLoader(loadingManager);
 
-const rgbeLoader = new RGBELoader(loadingManager)
+// const rgbeLoader = new RGBELoader(loadingManager)
 
-const orbit = new OrbitControls(camera, renderer.domElement);
-camera.position.set(-90, 140, 140);
-orbit.update();
+// const orbit = new OrbitControls(camera, renderer.domElement);
 
-const ambientLight = new THREE.AmbientLight(0x333333);
-scene.add(ambientLight);
+// orbit.update();
+
 
 const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
 scene.background = cubeTextureLoader.load([
@@ -76,6 +75,7 @@ scene.background = cubeTextureLoader.load([
 ]);
 
 const textureLoader = new THREE.TextureLoader();
+
 
 const sunGeo = new THREE.SphereGeometry(16, 30, 30);
 const sunMat = new THREE.MeshBasicMaterial({
@@ -114,26 +114,30 @@ function createPlanete(size, texture, position, ring) {
 let divText = document.createElement('div') //wieg
 let divDescription = document.createElement('div')
 
-const mercury = createPlanete(3.2, mercuryTexture, 28);
-const venus = createPlanete(5.8, venusTexture, 44);
-const earth = createPlanete(6, earthTexture, 62);
-const mars = createPlanete(4, marsTexture, 78);
-const jupiter = createPlanete(12, jupiterTexture, 100);
-const saturn = createPlanete(10, saturnTexture, 138, {
-    innerRadius: 10,
-    outerRadius: 20,
+const mercury = createPlanete(3.2, mercuryTexture, 48);
+const venus = createPlanete(5.5, venusTexture, 75);
+const earth = createPlanete(6.8, earthTexture, 108);
+const mars = createPlanete(4.6, marsTexture, 130);
+const jupiter = createPlanete(14, jupiterTexture, 165);
+const saturn = createPlanete(12.5, saturnTexture, 215, {
+    innerRadius: 16,
+    outerRadius: 24,
     texture: saturnRingTexture
 });
-const uranus = createPlanete(7, uranusTexture, 176, {
-    innerRadius: 7,
+const uranus = createPlanete(8.5, uranusTexture, 257, {
+    innerRadius: 10,
     outerRadius: 12,
     texture: uranusRingTexture
 });
-const neptune = createPlanete(7, neptuneTexture, 200);
-const pluto = createPlanete(2.8, plutoTexture, 216);
+const neptune = createPlanete(9, neptuneTexture, 280);
+
 
 const pointLight = new THREE.PointLight(0xFFFFFF, 30000, 3000);
 scene.add(pointLight);
+
+//NOTE - ambient light
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.06);
+scene.add(ambientLight);
 
 function animate() {
     //Self-rotation
@@ -146,7 +150,6 @@ function animate() {
     saturn.mesh.rotateY(0.038);
     uranus.mesh.rotateY(0.03);
     neptune.mesh.rotateY(0.032);
-    pluto.mesh.rotateY(0.008);
     labelRenderer.render(scene,camera);
 
     //Around-sun-rotation
@@ -158,7 +161,6 @@ function animate() {
     saturn.obj.rotateY(0.0009);
     uranus.obj.rotateY(0.0004);
     neptune.obj.rotateY(0.0001);
-    pluto.obj.rotateY(0.00007);
 
     renderer.render(scene, camera);
 }
@@ -166,29 +168,102 @@ function animate() {
 renderer.setAnimationLoop(animate);
 
 
-//Tween function to zoom kada planet
-// document.getElementById('mercuryButton').addEventListener('click', function() {
-//     gsap.to(camera.position, {
-//         duration: 2,
-//         x: mercury.mesh.position.x,
-//         y: mercury.mesh.position.y,
-//         z: mercury.mesh.position.z + 20,
-//         onUpdate: () => camera.lookAt(mercury.mesh.position)
-        
-    // });
+
 //button to show text - wieg
 
+function disableUserControl() {
+    document.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('mousedown', handleMouseDown);
+}
+
+function handleKeyDown(event) {
+    event.preventDefault();
+}
+
+function handleMouseDown(event) {
+    event.preventDefault();
+}
+
+disableUserControl();
+
+let zoomedIn = false; //  track of the zoom state
+let zoomedInPlanet = null; // store the currently zoomed-in planet
+
+
+function toggleZoom(planet, xOffset, yOffset, zOffset, extraHeight = 5) {
+    return function () {
+      if (zoomedInPlanet !== planet) {
+        gsap.to(camera.position, {
+          duration: 2,
+          x: planet.mesh.position.x,
+          y: planet.mesh.position.y + yOffset,
+          z: planet.mesh.position.z + zOffset,
+          onUpdate: () => {
+            updateCameraPosition(planet, xOffset, yOffset, zOffset, extraHeight);
+          },
+        });
+        if (zoomedInPlanet) {
+          zoomedInPlanet.obj.remove(camera);
+        }
+        zoomedInPlanet = planet;
+        planet.obj.add(camera);
+      }
+    };
+  }
+  
+  
+
+
+
+// Function to update the camera's position and ensure the planet is centered
+function updateCameraPosition(planet, xOffset, yOffset, zOffset, extraHeight = 0) {
+    const orbitingPlanetPosition = new THREE.Vector3().copy(planet.mesh.position);
+    orbitingPlanetPosition.add(new THREE.Vector3(0, yOffset, zOffset + extraHeight));
+  
+    const distanceToPlanet = camera.position.distanceTo(orbitingPlanetPosition);
+  
+    // Center the camera on the planet's position
+    const desiredCameraPosition = orbitingPlanetPosition.clone().sub(
+      camera.getWorldDirection().multiplyScalar(distanceToPlanet)
+    );
+  
+    camera.position.lerp(desiredCameraPosition, 0.1);
+    camera.lookAt(planet.mesh.position);
+    requestAnimationFrame(() => updateCameraPosition(planet, xOffset, yOffset, zOffset, extraHeight));
+  }
+
+// Store the initial camera position for reference
+const initialCameraPosition = camera.position.clone();
+
+// Function to handle back button zoom out (with precise restoration)
+function zoomOut() {
+    if (zoomedInPlanet) {
+      gsap.to(camera.position, {
+        duration: 2,
+        x: initialCameraPosition.x,
+        y: initialCameraPosition.y,  // Ensure exact y-position match
+        z: initialCameraPosition.z,
+        onUpdate: () => {
+          updateCameraPosition(null, 0, 0, 0, 0);
+        },
+      });
+      zoomedInPlanet.obj.remove(camera);
+      scene.add(camera); // Re-add camera to the scene
+      zoomedInPlanet = null;
+      divText.textContent = "";
+      divDescription.textContent = "";
+    }
+  }
+  
+  // Event listener for back button
+document.getElementById('back').addEventListener('click', zoomOut);
 
 document.getElementById('mercuryButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: mercury.mesh.position.x,
-        y: mercury.mesh.position.y,
-        z: mercury.mesh.position.z + 20,
-        onUpdate: () => camera.lookAt(mercury.mesh.position)
-    });
-
-    // titlechange -wieg
+    if (!zoomedIn) {
+        toggleZoom(mercury, 15, 0, 30)();
+      }
+  
+     // titlechange -wieg
     divText.textContent = 'MERCURY';
     divText.setAttribute('id', 'title');
     divText.setAttribute('class', 'title');
@@ -206,16 +281,11 @@ document.getElementById('mercuryButton').addEventListener('click', function(){ /
 
 
 
-document.getElementById('venusButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        delay: 0.1,
-        x: venus.mesh.position.x,
-        y: venus.mesh.position.y,
-        z: venus.mesh.position.z + 20,
-        onUpdate: () => camera.lookAt(venus.mesh.position)
-    });
-});
+document.getElementById('venusButton').addEventListener('click', () => {
+    if (!zoomedIn) {
+      toggleZoom(venus, 15, 0, 30)();
+    }
+  });
 document.getElementById('venusButton').addEventListener('click', function(){ // wieg
     divText.textContent = 'VENUS'
     divText.style.marginTop ='10px'
@@ -228,17 +298,11 @@ document.getElementById('venusButton').addEventListener('click', function(){ //w
     description.append(divDescription)
 
 });  
-document.getElementById('earthButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: earth.mesh.position.x,
-        y: earth.mesh.position.y,
-        z: earth.mesh.position.z + 20,
-        onUpdate: () => camera.lookAt(earth.mesh.position)
-        
-        
-    });
-});
+document.getElementById('earthButton').addEventListener('click', () => {
+    if (!zoomedIn) {
+      toggleZoom(earth, 15, 0, 30)();
+    }
+  });
 
 document.getElementById('earthButton').addEventListener('click', function(){ //weig
     divText.textContent = 'EARTH'
@@ -253,13 +317,9 @@ document.getElementById('earthButton').addEventListener('click', function(){ //w
     description.append(divDescription)
 });
 document.getElementById('marsButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: mars.mesh.position.x,
-        y: mars.mesh.position.y,
-        z: mars.mesh.position.z + 20,
-        onUpdate: () => camera.lookAt(mars.mesh.position)
-    });
+    if (!zoomedIn) {
+        toggleZoom(mars, 15, 0, 30)();
+      }
 document.getElementById('marsButton').addEventListener('click', function(){ //wieg
         divDescription.textContent = "Mars, a barren, rocky, and frigid world, orbits as the fourth planet from the Sun and stands as one of Earth's adjacent neighbors alongside Venus. Easily visible in the night sky, it appears as a vibrant red dot, earning its moniker, the Red Planet. Throughout history, Mars has been linked to conflict and violence due to its association with warfare and slaughter."
         description.append(divDescription)
@@ -275,13 +335,9 @@ document.getElementById('marsButton').addEventListener('click', function(){ //we
 });
 
 document.getElementById('jupiterButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: jupiter.mesh.position.x,
-        y: jupiter.mesh.position.y + 20,
-        z: jupiter.mesh.position.z + 40,
-        onUpdate: () => camera.lookAt(jupiter.mesh.position)
-    });
+    if (!zoomedIn) {
+        toggleZoom(jupiter, 15, 0, 70)();
+      }
 });
 document.getElementById('jupiterButton').addEventListener('click', function(){ //weig
     divText.textContent = 'JUPITER'
@@ -297,13 +353,9 @@ document.getElementById('jupiterButton').addEventListener('click', function(){ /
 });
 
 document.getElementById('saturnButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: saturn.mesh.position.x,
-        y: saturn.mesh.position.y + 20,
-        z: saturn.mesh.position.z + 40,
-        onUpdate: () => camera.lookAt(saturn.mesh.position)
-    });
+    if (!zoomedIn) {
+        toggleZoom(saturn, 15, 2, 55)();
+      }
 });
 
 
@@ -322,14 +374,9 @@ document.getElementById('saturnButton').addEventListener('click', function(){ //
 
 
 document.getElementById('uranusButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: uranus.mesh.position.x,
-        y: uranus.mesh.position.y + 20,
-        z: uranus.mesh.position.z + 40,
-        onUpdate: () => camera.lookAt(uranus.mesh.position)
-
-    });
+    if (!zoomedIn) {
+        toggleZoom(uranus, 15, 2, 40)();
+      }
 });
 
 document.getElementById('uranusButton').addEventListener('click', function(){ //wieg
@@ -346,13 +393,9 @@ document.getElementById('uranusButton').addEventListener('click', function(){ //
 });
 
 document.getElementById('neptuneButton').addEventListener('click', function() {
-    gsap.to(camera.position, {
-        duration: 2,
-        x: neptune.mesh.position.x,
-        y: neptune.mesh.position.y,
-        z: neptune.mesh.position.z + 40,
-        onUpdate: () => camera.lookAt(neptune.mesh.position)
-    });
+    if (!zoomedIn) {
+        toggleZoom(neptune, 15, 0, 50)();
+      }
 });
 
 document.getElementById('neptuneButton').addEventListener('click', function(){ //wieg
@@ -381,11 +424,11 @@ const labelRenderer = new CSS2DRenderer();
 labelRenderer.setSize(window.innerWidth, window.innerHeight);
 
 
-function createCpointMesh(name, x, y, z){
-    const geo = new THREE.SphereBufferGeometry(0.1);
-    const mat = new THREE.MeshBasicMaterial({color: 0xFF0000});
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(x, y, z);
-    mesh.name = name;
-    return mesh;
-}
+// function createCpointMesh(name, x, y, z){
+//     const geo = new THREE.SphereBufferGeometry(0.1);
+//     const mat = new THREE.MeshBasicMaterial({color: 0xFF0000});
+//     const mesh = new THREE.Mesh(geo, mat);
+//     mesh.position.set(x, y, z);
+//     mesh.name = name;
+//     return mesh;
+// }
